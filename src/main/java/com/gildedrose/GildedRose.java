@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.toList;
     Since requirments allow me to only change GildedRose#upadeQuality() I will
     refrain from changing contract e.g. Item[] to List<Item>
  */
-class GildedRose {
+public class GildedRose {
 
     private Map<String, Consumer<Item>> qualityUpdateRules = new HashMap<>();
 
@@ -45,7 +45,7 @@ class GildedRose {
         item.quality = item.quality < 0 ? 0 : item.quality;
     };
 
-    Item[] items;
+    private final Item[] items;
 
     public GildedRose(Item[] items) {
         this.items = items;
@@ -74,5 +74,9 @@ class GildedRose {
 
     private void decreaseSellIn(Item item) {
         item.sellIn -= 1;
+    }
+
+    public Item[] getItems() {
+        return items;
     }
 }
