@@ -12,36 +12,22 @@ import static java.util.Optional.*;
  */
 class GildedRose {
 
-    private Map<String, Consumer<Item>> itemRules = new HashMap<>();
+    private Map<String, Consumer<Item>> qualityUpdateRules = new HashMap<>();
 
     {
-        itemRules.put(
+        qualityUpdateRules.put(
                 "Aged Brie",
                 item -> {
-                    if (item.sellIn > 0) {
-                        item.quality += 1;
-                    } else {
-                        item.quality += 2;
-                    }
-
+                    item.quality += item.sellIn > 0 ? 1 : 2;
                     item.quality = item.quality > 50 ? 50 : item.quality;
-
-                    item.sellIn -= 1;
                 });
 
-        itemRules.put("Sulfuras, Hand of Ragnaros", item -> item.sellIn -= 1);
-        itemRules.put("Conjured Mana Cake", item -> {
-            if (item.sellIn > 0) {
-                item.quality -= 2;
-            } else {
-                item.quality -= 4;
-            }
-
+        qualityUpdateRules.put("Sulfuras, Hand of Ragnaros", item -> {/* do nothing */});
+        qualityUpdateRules.put("Conjured Mana Cake", item -> {
+            item.quality -= item.sellIn > 0 ? 2 : 4;
             item.quality = item.quality < 0 ? 0 : item.quality;
-
-            item.sellIn -= 1;
         });
-        itemRules.put("Backstage passes to a TAFKAL80ETC concert", item -> {
+        qualityUpdateRules.put("Backstage passes to a TAFKAL80ETC concert", item -> {
             if (item.sellIn > 10) {
                 item.quality += 1;
             } else if (item.sellIn > 5) {
@@ -51,20 +37,12 @@ class GildedRose {
             }
 
             item.quality = item.sellIn < 1 ? 0 : item.quality;
-
-            item.sellIn -= 1;
         });
     }
 
     private Consumer<Item> fallbackRule = item -> {
-        if (item.sellIn > 0) {
-            item.quality -= 1;
-        } else {
-            item.quality -= 2;
-        }
+        item.quality -= item.sellIn > 0 ? 1 : 2;
         item.quality = item.quality < 0 ? 0 : item.quality;
-
-        item.sellIn -= 1;
     };
 
     Item[] items;
@@ -74,8 +52,16 @@ class GildedRose {
     }
 
     public void updateQuality() {
-        stream(items).forEach(item ->
-                ofNullable(itemRules.get(item.name)).orElse(fallbackRule).accept(item));
+        stream(items).forEach(item -> {
+            ofNullable(qualityUpdateRules.get(item.name))
+                    .orElse(fallbackRule).accept(item);
+
+            decreaseSellIn(item);
+        });
+    }
+
+    private void decreaseSellIn(Item item) {
+        item.sellIn -= 1;
     }
 
 }
