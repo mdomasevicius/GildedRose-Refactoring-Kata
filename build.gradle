@@ -1,5 +1,8 @@
-apply plugin: 'groovy'
-apply plugin: 'idea'
+plugins {
+    id 'groovy'
+    id 'idea'
+    id 'org.springframework.boot' version '2.0.2.RELEASE'
+}
 
 repositories {
     mavenCentral()
