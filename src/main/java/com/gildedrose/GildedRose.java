@@ -3,8 +3,8 @@ package com.gildedrose;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static java.util.Arrays.*;
-import static java.util.Optional.*;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 /*
     Since requirments allow me to only change GildedRose#upadeQuality() I will
@@ -22,12 +22,12 @@ class GildedRose {
                     item.quality = item.quality > 50 ? 50 : item.quality;
                 });
 
-        qualityUpdateRules.put("Sulfuras, Hand of Ragnaros", item -> {/* do nothing */});
-        qualityUpdateRules.put("Conjured Mana Cake", item -> {
+        qualityUpdateRules.put("Sulfuras", item -> {/* do nothing */});
+        qualityUpdateRules.put("Conjured", item -> {
             item.quality -= item.sellIn > 0 ? 2 : 4;
             item.quality = item.quality < 0 ? 0 : item.quality;
         });
-        qualityUpdateRules.put("Backstage passes to a TAFKAL80ETC concert", item -> {
+        qualityUpdateRules.put("Backstage", item -> {
             if (item.sellIn > 10) {
                 item.quality += 1;
             } else if (item.sellIn > 5) {
@@ -53,15 +53,26 @@ class GildedRose {
 
     public void updateQuality() {
         stream(items).forEach(item -> {
-            ofNullable(qualityUpdateRules.get(item.name))
-                    .orElse(fallbackRule).accept(item);
-
+            findApplicableRuleOrFail(item).accept(item);
             decreaseSellIn(item);
         });
+    }
+
+    private Consumer<Item> findApplicableRuleOrFail(Item item) {
+        List<Consumer<Item>> applicableRules = qualityUpdateRules.keySet()
+                .stream()
+                .filter(key -> item.name.toLowerCase().contains(key.toLowerCase()))
+                .map(key -> qualityUpdateRules.get(key))
+                .collect(toList());
+
+        if (applicableRules.size() > 1) {
+            throw new IllegalArgumentException("Conflict - multiple rules found for single item");
+        }
+
+        return applicableRules.isEmpty() ? fallbackRule : applicableRules.get(0);
     }
 
     private void decreaseSellIn(Item item) {
         item.sellIn -= 1;
     }
-
 }
