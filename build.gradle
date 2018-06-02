@@ -19,3 +19,7 @@ idea {
         vcs = 'Git'
     }
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.7'
+}
