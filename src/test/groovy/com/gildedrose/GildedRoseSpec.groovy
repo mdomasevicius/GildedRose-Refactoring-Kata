@@ -5,7 +5,7 @@ import spock.lang.Unroll
 
 class GildedRoseSpec extends Specification {
 
-    @Unroll('aged bie quality should be #expectedQuality after #days days')
+    @Unroll('aged brie quality should be #expectedQuality after #days days')
     def 'Aged Brie" actually increases in Quality the older it gets'() {
         given:
             GildedRose app = new GildedRose(

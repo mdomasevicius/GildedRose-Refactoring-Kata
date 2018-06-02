@@ -23,10 +23,12 @@ public class GildedRose {
                 });
 
         qualityUpdateRules.put("Sulfuras", item -> {/* do nothing */});
+
         qualityUpdateRules.put("Conjured", item -> {
             item.quality -= item.sellIn > 0 ? 2 : 4;
             item.quality = item.quality < 0 ? 0 : item.quality;
         });
+
         qualityUpdateRules.put("Backstage", item -> {
             if (item.sellIn > 10) {
                 item.quality += 1;

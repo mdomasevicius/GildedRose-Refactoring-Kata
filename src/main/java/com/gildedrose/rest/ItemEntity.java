@@ -58,7 +58,7 @@ public class ItemEntity {
         this.quality = quality;
     }
 
-    public static ItemEntity toItemEntity(Item item) {
+    static ItemEntity toItemEntity(Item item) {
         return new ItemEntity(item.name, item.sellIn, item.quality);
     }
 }
