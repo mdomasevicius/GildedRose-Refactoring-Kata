@@ -17,7 +17,7 @@ interface ItemRepo extends PagingAndSortingRepository<ItemEntity, Long> {
 
     @RestResource
     @Override
-    Optional<ItemEntity> findById(Long aLong);
+    Optional<ItemEntity> findById(Long id);
 
     @RestResource
     @Override

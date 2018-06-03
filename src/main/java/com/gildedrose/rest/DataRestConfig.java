@@ -10,6 +10,5 @@ class DataRestConfig extends RepositoryRestConfigurerAdapter {
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         config.setExposeRepositoryMethodsByDefault(false);
-        super.configureRepositoryRestConfiguration(config);
     }
 }

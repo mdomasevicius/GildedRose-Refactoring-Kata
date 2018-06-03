@@ -1,6 +1,8 @@
 package com.gildedrose;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.stream;
@@ -12,15 +14,22 @@ import static java.util.stream.Collectors.toList;
  */
 public class GildedRose {
 
-    private Map<String, Consumer<Item>> qualityUpdateRules = new HashMap<>();
+    private final Map<String, Consumer<Item>> qualityUpdateRules = new HashMap<>();
 
-    {
-        qualityUpdateRules.put(
-                "Aged Brie",
-                item -> {
-                    item.quality += item.sellIn > 0 ? 1 : 2;
-                    item.quality = item.quality > 50 ? 50 : item.quality;
-                });
+    private final Consumer<Item> defaultQualityRule = item -> {
+        item.quality -= item.sellIn > 0 ? 1 : 2;
+        item.quality = item.quality < 0 ? 0 : item.quality;
+    };
+
+    private final Item[] items;
+
+    public GildedRose(Item[] items) {
+        this.items = items;
+
+        qualityUpdateRules.put("Aged Brie", item -> {
+            item.quality += item.sellIn > 0 ? 1 : 2;
+            item.quality = item.quality > 50 ? 50 : item.quality;
+        });
 
         qualityUpdateRules.put("Sulfuras", item -> {/* do nothing */});
 
@@ -42,17 +51,6 @@ public class GildedRose {
         });
     }
 
-    private Consumer<Item> fallbackRule = item -> {
-        item.quality -= item.sellIn > 0 ? 1 : 2;
-        item.quality = item.quality < 0 ? 0 : item.quality;
-    };
-
-    private final Item[] items;
-
-    public GildedRose(Item[] items) {
-        this.items = items;
-    }
-
     public void updateQuality() {
         stream(items).forEach(item -> {
             findApplicableRuleOrFail(item).accept(item);
@@ -63,8 +61,8 @@ public class GildedRose {
     private Consumer<Item> findApplicableRuleOrFail(Item item) {
         List<Consumer<Item>> applicableRules = qualityUpdateRules.keySet()
                 .stream()
-                .filter(key -> item.name.toLowerCase().contains(key.toLowerCase()))
-                .map(key -> qualityUpdateRules.get(key))
+                .filter(key -> nameContainsKey(item.name, key))
+                .map(qualityUpdateRules::get)
                 .collect(toList());
 
         if (applicableRules.size() > 1) {
@@ -72,10 +70,14 @@ public class GildedRose {
                 "Conflict - multiple rules found for single item (" + item.toString() + ")");
         }
 
-        return applicableRules.isEmpty() ? fallbackRule : applicableRules.get(0);
+        return applicableRules.isEmpty() ? defaultQualityRule : applicableRules.get(0);
     }
 
-    private void decreaseSellIn(Item item) {
+    private static boolean nameContainsKey(String name, String key) {
+        return name.toLowerCase().contains(key.toLowerCase());
+    }
+
+    private static void decreaseSellIn(Item item) {
         item.sellIn -= 1;
     }
 
