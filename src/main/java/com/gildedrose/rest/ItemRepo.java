@@ -10,7 +10,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import java.util.Optional;
 
 @RepositoryRestResource(
-    collectionResourceRel = "item",
+    collectionResourceRel = "items",
     path = "items",
     excerptProjection = ItemEntity.ListProjection.class)
 interface ItemRepo extends PagingAndSortingRepository<ItemEntity, Long> {
