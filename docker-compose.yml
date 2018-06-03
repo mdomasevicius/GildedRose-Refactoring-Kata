@@ -1,6 +1,6 @@
 version: '3'
 services:
-    logger:
+    kata:
         build: .
         ports:
             - '8080:8080'
