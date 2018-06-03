@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.LongStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -20,28 +21,31 @@ class DataInit implements InitializingBean {
 
     private final ItemRepo repo;
 
-    @Value("${gilded-rose.days-passed:10}")
-    private Long daysPassed;
+    private final Long daysPassed;
 
-    DataInit(ItemRepo repo) {
+    DataInit(
+        ItemRepo repo,
+        @Value("${gilded-rose.days-passed:10}") Long daysPassed
+    ) {
         this.repo = repo;
+        this.daysPassed = daysPassed;
     }
 
     @Override
     public void afterPropertiesSet() {
-        txOperation().perform();
+        gildedRoseWithTxSupport().runShopFor(this.daysPassed);
     }
 
-    interface TxOperation {
-        void perform();
+    interface GildedRoseWithTxSupport {
+        void runShopFor(Long days);
     }
 
     @Bean
-    TxOperation txOperation() {
-        return new TxOperation() {
+    GildedRoseWithTxSupport gildedRoseWithTxSupport() {
+        return new GildedRoseWithTxSupport() {
             @Transactional
             @Override
-            public void perform() {
+            public void runShopFor(Long days) {
                 GildedRose gildedRose = new GildedRose(new Item[]{
                     new Item("+5 Dexterity Vest", 10, 20),
                     new Item("Aged Brie", 2, 0),
@@ -54,9 +58,7 @@ class DataInit implements InitializingBean {
                     new Item("Conjured Mana Cake", 3, 6)
                 });
 
-                for (int i = 0; i < 20; i++) {
-                    gildedRose.updateQuality();
-                }
+                LongStream.rangeClosed(1, days).forEach(ignored -> gildedRose.updateQuality());
 
                 List<ItemEntity> collect = Arrays.stream(gildedRose.getItems()).map(ItemEntity::toItemEntity).collect(toList());
                 repo.saveAll(collect);
