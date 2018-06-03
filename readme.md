@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mdomasevicius/GildedRose-Refactoring-Kata.svg?branch=master)](https://travis-ci.org/mdomasevicius/GildedRose-Refactoring-Kata)
+
 # Gilded Rose Kata
 
 My take on Gilded rose kata.
