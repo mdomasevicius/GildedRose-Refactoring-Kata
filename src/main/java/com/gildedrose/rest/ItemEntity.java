@@ -2,7 +2,10 @@ package com.gildedrose.rest;
 
 import com.gildedrose.Item;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class ItemEntity {
@@ -10,7 +13,7 @@ public class ItemEntity {
     public ItemEntity() {
     }
 
-    public ItemEntity(String name, int sellIn, int quality) {
+    private ItemEntity(String name, int sellIn, int quality) {
         this.name = name;
         this.sellIn = sellIn;
         this.quality = quality;
@@ -30,35 +33,23 @@ public class ItemEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getSellIn() {
         return sellIn;
     }
 
-    public void setSellIn(int sellIn) {
-        this.sellIn = sellIn;
-    }
-
     public int getQuality() {
         return quality;
     }
 
-    public void setQuality(int quality) {
-        this.quality = quality;
-    }
-
     static ItemEntity toItemEntity(Item item) {
         return new ItemEntity(item.name, item.sellIn, item.quality);
+    }
+
+    interface ListProjection {
+        String getName();
     }
 }
