@@ -7,7 +7,7 @@ import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
 /*
-    Since requirments allow me to only change GildedRose#upadeQuality() I will
+    Since requirements allow me to only change GildedRose#upadeQuality() I will
     refrain from changing contract e.g. Item[] to List<Item>
  */
 public class GildedRose {
@@ -68,7 +68,8 @@ public class GildedRose {
                 .collect(toList());
 
         if (applicableRules.size() > 1) {
-            throw new IllegalArgumentException("Conflict - multiple rules found for single item");
+            throw new IllegalArgumentException(
+                "Conflict - multiple rules found for single item (" + item.toString() + ")");
         }
 
         return applicableRules.isEmpty() ? fallbackRule : applicableRules.get(0);
