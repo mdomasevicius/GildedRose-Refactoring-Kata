@@ -8,9 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class ItemEntity {
+class ItemEntity {
 
-    public ItemEntity() {
+    ItemEntity() {
     }
 
     private ItemEntity(String name, int sellIn, int quality) {
