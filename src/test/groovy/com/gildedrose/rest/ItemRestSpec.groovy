@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED
 import static org.springframework.http.HttpStatus.OK
 
 @SpringBootTest(classes = Application, webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -42,6 +43,26 @@ class ItemRestSpec extends Specification {
                 sellIn != null
                 quality != null
             }
+    }
+
+    def 'POST is not allowed'() {
+        expect:
+            rest.post('/api/items', [name: 'Aged Brie']).statusCode == METHOD_NOT_ALLOWED
+    }
+
+    def 'PUT is not allowed'() {
+        given:
+            def itemId = findItemId()
+        expect:
+            rest.put("/api/items/$itemId", [name: 'Aged Brie', sellIn: 10, quality: 10])
+                .statusCode == METHOD_NOT_ALLOWED
+    }
+
+    def 'DELETE is not allowed'() {
+        given:
+            def itemId = findItemId()
+        expect:
+            rest.delete("/api/items/$itemId").statusCode == METHOD_NOT_ALLOWED
     }
 
     private Long findItemId() {
