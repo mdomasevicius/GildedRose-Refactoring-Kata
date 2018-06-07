@@ -2,7 +2,6 @@ package com.gildedrose.rest
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 
@@ -15,9 +14,6 @@ class ItemRestSpec extends Specification {
 
     @Autowired
     RestClient rest
-
-    @Autowired
-    TestRestTemplate restTemplate
 
     def 'can fetch item list'() {
         when:
